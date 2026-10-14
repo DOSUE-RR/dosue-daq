@@ -18,6 +18,7 @@ TIMEOUT = 10
 
 class APSYN420:
     def __init__(self, host_ip=IP_ADDRESS, port=PORT, timeout=TIMEOUT, verbose=0):
+        print(verbose)
         self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._host_ip = host_ip
         self._port = port
@@ -173,7 +174,7 @@ def main(onoff = False, # True:ON, False:OFF
          verbose = 0):
 
     # Initialize connection
-    sg = APSYN420(host_ip=ip_address, port=port)
+    sg = APSYN420(host_ip=ip_address, port=port, verbose=verbose)
     sg.connect()
 
     # Setting configuration
@@ -191,8 +192,8 @@ def main(onoff = False, # True:ON, False:OFF
         pass
 
     print(f'frequency = {sg.freq} [Hz]')
-    print(f'power = {sg.power} [dBm]')
-    print(f'power = {sg.power_W} [W]')
+    #print(f'power = {sg.power} [dBm]')
+    #print(f'power = {sg.power_W} [W]')
     #print(f'phase = {sg.phase()} [rad]')
 
     # Power ON/OFF
@@ -236,8 +237,6 @@ if __name__ == '__main__':
         ret = main(
             onoff = args.on,
             freq = args.freq,
-            power_dBm = args.power_dBm,
-            power_W = args.power_W,
             ip_address = args.ip_address,
             verbose = args.verbose)
         pass
