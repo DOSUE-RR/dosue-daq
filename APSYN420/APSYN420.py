@@ -18,7 +18,6 @@ TIMEOUT = 10
 
 class APSYN420:
     def __init__(self, host_ip=IP_ADDRESS, port=PORT, timeout=TIMEOUT, verbose=0):
-        print(verbose)
         self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._host_ip = host_ip
         self._port = port
@@ -30,7 +29,7 @@ class APSYN420:
         if self._connected:
             self.close()
 
-    def _print(self, message, verbose_threshold):
+    def _print(self, message, verbose_threshold=-1):
         if self._verbose > verbose_threshold:
             print(message)
             pass
@@ -72,27 +71,27 @@ class APSYN420:
         self._w('*WAI')
 
     def print_status(self):
-        print('APSYN420:pring_status(): Device identification =', self._wr('*IDN?'))
-        print('APSYN420:pring_status(): System Error =', self._wr('SYST:ERR?'))
-        print('APSYN420:pring_status(): Event Status =', self._wr('*ESR?'))
-        ##print('APSYN420:pring_status(): SYST:LANG =', self._wr('SYST:LANG?'))
+        self._print('APSYN420:pring_status(): Device identification ='+ self._wr('*IDN?'))
+        self._print('APSYN420:pring_status(): System Error ='+ self._wr('SYST:ERR?'))
+        self._print('APSYN420:pring_status(): Event Status ='+ self._wr('*ESR?'))
+        ##print('APSYN420:pring_status(): SYST:LANG ='+ self._wr('SYST:LANG?'))
 
     def print_error(self):
-        print('APSYN420:pring_error(): System Error =', self._wr('SYST:ERR?'))
+        self._print('APSYN420:pring_error(): System Error ='+ self._wr('SYST:ERR?'))
 
     def default_setting(self):
-        print('APSYN420:default_setting(): ')
-        print('APSYN420:default_setting(): *** Original status ***')
+        self._print('APSYN420:default_setting(): ')
+        self._print('APSYN420:default_setting(): *** Original status ***')
         self.print_status()
-        print('APSYN420:default_setting(): ')
-        print('APSYN420:default_setting(): *** Initialize settings')
+        self._print('APSYN420:default_setting(): ')
+        self._print('APSYN420:default_setting(): *** Initialize settings')
         self._w('*CLS') # clear
         self._w('*RST') # reset
         ##self._w('SYST:LANG SCPI')
-        print('APSYN420:default_setting(): ')
-        print('APSYN420:default_setting(): *** Current status ***')
+        self._print('APSYN420:default_setting(): ')
+        self._print('APSYN420:default_setting(): *** Current status ***')
         self.print_status()
-        print('APSYN420:default_setting(): ')
+        self._print('APSYN420:default_setting(): ')
         self.print_error()
         self._wait()
 
@@ -180,15 +179,16 @@ def main(onoff = False, # True:ON, False:OFF
     # Setting configuration
     sg.freq = freq
     if power_dBm is not None and power_W is None:
+        print('main(): WARNING! APSYN420 does NOT have a function to change the power.')
         sg.power = power_dBm
     elif power_W is not None and power_dBm is None:
+        print('main(): WARNING! APSYN420 does NOT have a function to change the power.')
         sg.power_W = power_W
     elif power_W is not None and power_dBm is not None:
         print('main(): WARNING! One of power_W or power_dBm should be specified!')
         print('main(): power_dBm = {power_dBm}, power_W = {power_W}')
         return -1
     else:
-        print('main(): WARNING! Both of power_W and power_dBm were not specified!')
         pass
 
     print(f'frequency = {sg.freq} [Hz]')

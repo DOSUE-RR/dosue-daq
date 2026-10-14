@@ -11,7 +11,7 @@ import socket
 import numpy as np
 
 #IP_ADDRESS = '192.168.215.113'
-IP_ADDRESS = '10.10.10.3'
+IP_ADDRESS = '10.10.10.104'
 PORT = 5025
 TIMEOUT = 10
 
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--on', action='store_true', default=False, help=f'Power ON (NOTE: Must select --on or --off)')
     parser.add_argument('--off', action='store_true', default=False, help=f'Power OFF (NOTE: Must select --on or --off)')
-    parser.add_argument('-f', '--freq', dest='freq', type=float, default=freq, help=f'Frequency [Hz] (default: {freq})')
+    parser.add_argument('-f', '--freq', dest='freq', type=int, default=freq, help=f'Frequency(int) [Hz] (default: {freq})')
     parser.add_argument('-p', '--power_dBm', dest='power_dBm', type=float, default=dBm,
                         help=f'RF power [dBm] NOTE:One of power_dBm or power_W should be specified. (default: {dBm})')
     parser.add_argument('-W', '--power_W', dest='power_W', type=float, default=W,

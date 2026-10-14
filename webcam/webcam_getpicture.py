@@ -6,9 +6,11 @@ import time;
 import shutil;
 import argparse
 
-outdir0    = '/home/dosue/data/webcam'
+outdir0    = '/data1/dosue/webcam'
 #dev_webcam = '/dev/v4l/by-id/usb-046d_Logitech_Webcam_C930e_4C3C897E-video-index0';
-dev_webcam = '/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB_2.0_Camera_SN0179-video-index0' # Tani's Chinese Camera
+#dev_webcam = '/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB_2.0_Camera_SN0179-video-index0' # Tani's Chinese Camera
+#dev_webcam = '/dev/video2' # FINER ELECOM_8MP_Webcam (Room)
+dev_webcam = '/dev/video0' # FINER ELECOM_8MP_Webcam (Cryostat window)
 
 # default setting
 """
@@ -34,15 +36,15 @@ Zoom, Absolute            100 (0%)        100 - 400
 Adjusting resolution from 384x288 to 352x288.
 """
 
-#nTimes = -1; # # of loop, -1: continue forever
-nTimes = 1; # # of loop, -1: continue forever
+nTimes = -1; # # of loop, -1: continue forever
+#nTimes = 1; # # of loop, -1: continue forever
 sleeptime  = 10; # sec
 #width = 1920/2;
 #height= 1080/2;
 width = 3200/2;
 height = 2400/2;
 delay      =   0; #  option of fswebcam
-frame      =  10; #  option of fswebcam
+frame      =   3; #  option of fswebcam
 rotate     =   0; #  option(rotate) of fswebcam degrees
 brightness = 128; #  0--255(default 128)
 contrast   = 128; #  0--255(        128)
@@ -58,7 +60,7 @@ zoom       = 100; # Zoom, Absolute 100--400
 
 latestfilename = 'latest.jpg';
 
-def getpicture(outdir='.', outname='aho.png') :
+def getpicture(dev_webcam="/dev/video0", outdir='.', outname='aho.png', rotate=rotate) :
   #command = '/usr/bin/fswebcam {outdir}/{outname} -d {dev} -r {width}x{height} '.format(
   # The order of outname should be at last.
   #command = '/usr/bin/fswebcam --png 9 --jpeg 95 -d {dev} -F {frame} -D {delay} -r {width}x{height} --rotate {rotate} --set Brightness={brightness} --set Contrast={contrast} --set Saturation={saturation} --set "Red Balance={redbalance}" --set "Blue Balance={bluebalance}" --set Gamma={gamma} --set Sharpness={sharpness} --set "Focus, Auto={focusmode}" --set "Focus (absolute)={focus}" --set "Zoom, Absolute={zoom}" {outdir}/{outname}'.format(
@@ -84,6 +86,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--update', dest='updateOnlyLatest', default=1, type=int, help=f'(default: 1)')
     parser.add_argument('-f', '--focus', dest='focus', default=-1, type=int, help=f'(default: -1)')
+    parser.add_argument('-d', '--device', dest='device', default="", type=str, help=f'(default: "")')
+    parser.add_argument('-o', '--outdir', dest='outdir', default="", type=str, help=f'(default: "")')
+    parser.add_argument('-r', '--rotate', dest='rotate', default=rotate, type=int, help=f'(default: {rotate})')
     args = parser.parse_args()
 
     updateOnlyLatest = args.updateOnlyLatest
@@ -92,6 +97,18 @@ if __name__ == '__main__':
         focus = args.focus
     else:
         focusmode = True
+        pass
+    
+    if args.device != "":
+        dev_webcam = args.device
+        pass
+
+    if args.outdir != "":
+        outdir0 = args.outdir
+        pass
+
+    if args.rotate != rotate:
+        rotate = args.rotate
         pass
 
     i = 0
@@ -104,7 +121,7 @@ if __name__ == '__main__':
         # get current time
         now    = datetime.datetime.now();
         # make latest picture
-        getpicture( outdir0, latestfilename );
+        getpicture( dev_webcam, outdir0, latestfilename, rotate );
  
         # copy file for ever keeping picture
         if not(updateOnlyLatest) : 
